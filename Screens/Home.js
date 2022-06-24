@@ -7,6 +7,7 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  TouchableOpacity,
 } from "react-native";
 
 import { fetchCharacters } from "../api/api";
@@ -26,24 +27,39 @@ function Home({ navigation }) {
     data_chatacters();
   }, []);
 
-  const Item = ({ name, image }) => (
+  const Item = ({ item }) => (
     <View style={styles.item}>
-      <Text style={styles.title}>{name}</Text>
-      <Image source={{ uri: `${image}` }} style={{ width: 50, height: 50 }} />
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Character", { character: item })}
+      >
+        <View style={{ flexDirection: "row", height: "100%" }}>
+          <Image
+            source={{ uri: `${item.image}` }}
+            style={{ width: 100, height: "100%", resizeMode: "contain" }}
+          />
+          <Text style={styles.title}>{item.name}</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 
-  const renderItem = ({ item }) => <Item name={item.name} image={item.image} />;
+  const renderItem = ({ item }) => <Item item={item} />;
 
-  return (
-    <SafeAreaView
-      style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-    >
-      <Text> Hello</Text>
-
-      <FlatList data={apiData} renderItem={renderItem} />
-    </SafeAreaView>
-  );
+  if (!apiData) {
+    return (
+      <SafeAreaView>
+        <Text>Loading...</Text>
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+      >
+        <FlatList data={apiData} renderItem={renderItem} />
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -52,9 +68,9 @@ const styles = StyleSheet.create({
   },
   item: {
     backgroundColor: "#f9c2ff",
-    padding: 20,
     marginVertical: 8,
     marginHorizontal: 16,
+    height: 100,
   },
   title: {
     fontSize: 32,
